@@ -1,0 +1,75 @@
+function Button(props){
+    return (
+      <div>
+        <button onClick={() => props.handleClick(props.row)}>{props.value}</button>
+      </div>
+    )
+}
+
+function Buttons(props){
+    var buttons =[]
+    var q = Object.keys(props.question)
+    var answers = Object.keys(props.question[q])
+    
+    if (props.count < 10){
+      for (let i = 0; i < 4; i++){
+          buttons.push(<Button value={answers[i]} row={i} handleClick={props.handleClick}/>)
+      }
+    }
+    
+    return(
+      <div>
+        <h1>{q}</h1>
+        {buttons}
+      </div>
+    )
+}
+
+class Game extends React.Component{
+    constructor(props){
+      super(props)
+      var questions = [
+        {'1 + 1 = ?':{1:0,2:1,3:0,4:0}},
+        {'Who is the author of "War and Peace"?':{'William Shakespeare':0,'Victor Hugo':0,'Leo Tolstoy':1,'Grimm':0}},
+        {'5 + 5 = ?':{5:0,7:0,10:1,15:0}},
+        {'Where is the Earth in Solar system?':{'1st':0,'2nd':0,'3rd':1,'4th':0}},
+        {'What is square root of 4?':{1:0,2:1,0:0,'Can\'t make it':0}},
+        {'The biggest island in the world is?':{'Hawai':0,'Greenland':1,'Devon':0,'Honshu':0}},
+        {'0! = ?':{0:0,1:1,2:0,3:0}},
+        {'Can elephant jump?':{'Sure':0,'No way':1,'Don\'t know':0,'Really?':0}},
+        {'What is Einstein\'s famous theory?':{'Gravitational theory':0,'Quantum theory':0,'Relativity theory':1,'Evolution theory':0}},
+        {'What number of this question':{'7th':0,'8th':0,'9th':0,'10th':1}},
+        {'You\'ve done!':{}}
+      ]
+      this.state = {questions: questions, correct:0, incorrect:0, count:0}
+      this.handleClick = this.handleClick.bind(this)
+    }
+    handleClick(row){
+      if (this.state.count == 10)
+        return
+      this.setState({count: this.state.count + 1})
+      var key = Object.keys(this.state.questions[this.state.count])
+      var ans = Object.values(this.state.questions[this.state.count][key])
+      if (ans[row] == 1){
+        this.setState({correct: this.state.correct + 1})
+      }
+      else{
+        this.setState({incorrect: this.state.incorrect + 1})
+      }
+    }
+    render(){
+      return(
+        <div>
+          <h1>{this.props.title}</h1>
+          <Buttons count = {this.state.count} question = {this.state.questions[this.state.count]} handleClick = {this.handleClick}/>
+          <h3>Correct: {this.state.correct}</h3>
+          <h3>Incorrect: {this.state.incorrect}</h3>
+        </div>
+      )
+    }
+}
+
+ReactDOM.render(
+    <Game/>,
+    document.getElementById('root')
+)
